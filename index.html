@@ -1,34 +1,16 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Flyff Galaxy Web Combat + Loot</title>
-  <link rel="stylesheet" href="style.css">
-</head>
 <body>
-  <h1>Flyff Galaxy Web Combat + Loot</h1>
+  <h1>Flyff Galaxy</h1>
 
-  <!-- Login/Register UI -->
   <input id="email" placeholder="Email"><br>
   <input id="password" type="password" placeholder="Password"><br>
   <button onclick="register()">Register</button>
   <button onclick="login()">Login</button>
   <button onclick="loginWithGoogle()">Login with Google</button>
 
-  <!-- Game Canvas -->
+  <p id="status"></p> <!-- ✅ Status messages appear here -->
+
   <canvas id="gameCanvas" width="600" height="400"></canvas>
 
-  <!-- Load Firebase auth first -->
   <script type="module" src="auth.js"></script>
-
-  <!-- Load game modules -->
-  <script type="module" src="game-core.js"></script>
-  <script type="module" src="game-render.js"></script>
-  <script type="module" src="game-controls.js"></script>
-  <script type="module" src="world.js"></script>
-  <script type="module" src="server.js"></script>
-  <script type="module" src="npc.js"></script>
-  <script type="module" src="quests.js"></script>
-  <script type="module" src="items.js"></script>
-  <script type="module" src="skills.js"></script>
+  <!-- other scripts -->
 </body>
-</html>
