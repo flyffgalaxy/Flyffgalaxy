@@ -24,6 +24,7 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
+    // Player + Enemies + Loot
     let player = { x: 50, y: 150, hp: 100, mp: 50, exp: 0, level: 1, inventory: [] };
     let enemies = [
       { x: 300, y: 150, hp: 50 },
@@ -33,6 +34,7 @@
     let damageTexts = [];
     let lootDrops = [];
 
+    // Register + Login
     async function register() {
       const email = document.getElementById("email").value;
       const pass = document.getElementById("password").value;
@@ -57,20 +59,20 @@
       await setDoc(doc(db, "players", uid), player);
     }
 
+    // Canvas + Sprites
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
 
     const sprite = new Image();
-    sprite.src = "https://i.imgur.com/4AiXzf8.png"; // sample character sprite
+    sprite.src = "https://i.imgur.com/4AiXzf8.png"; // character sprite
     const enemySprite = new Image();
-    enemySprite.src = "https://i.imgur.com/2yaf2wb.png"; // sample enemy sprite
+    enemySprite.src = "https://i.imgur.com/2yaf2wb.png"; // enemy sprite
     const potionSprite = new Image();
-    potionSprite.src = "https://i.imgur.com/1XQnFqT.png"; // sample potion icon
-
-    function drawScene() {
+    potionSprite.src = "https://i.imgur.com/1XQnFqT.png"; // potion icon
+        function drawScene() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw player
+      // Player
       if (player.hp > 0) {
         ctx.drawImage(sprite, player.x, player.y, 50, 50);
       } else {
@@ -79,14 +81,12 @@
         ctx.fillText("You Died! Respawning...", canvas.width/2 - 80, canvas.height/2);
       }
 
-      // Draw enemies
+      // Enemies
       enemies.forEach(enemy => {
-        if (enemy.hp > 0) {
-          ctx.drawImage(enemySprite, enemy.x, enemy.y, 50, 50);
-        }
+        if (enemy.hp > 0) ctx.drawImage(enemySprite, enemy.x, enemy.y, 50, 50);
       });
 
-      // Draw loot drops
+      // Loot
       lootDrops.forEach(loot => {
         ctx.drawImage(potionSprite, loot.x, loot.y, 30, 30);
       });
@@ -106,7 +106,7 @@
       ctx.fillText("HP: " + player.hp, 10, 20);
       ctx.fillText("EXP: " + player.exp, 10, 40);
       ctx.fillText("Level: " + player.level, 10, 60);
-      ctx.fillText("Inventory: " + player.inventory.join(", "), 10, 80);
+      ctx.fillText("Inventory: " + (player.inventory.length ? player.inventory.join(", ") : "Empty"), 10, 80);
     }
 
     document.addEventListener("keydown", async (e) => {
@@ -127,7 +127,7 @@
             player.exp += 5;
             damageTexts.push({ text: "-" + dmg, x: enemy.x+20, y: enemy.y, startY: enemy.y, color: "red" });
 
-            // Enemy counter-attack
+            // Counter-attack
             let counter = Math.floor(Math.random() * 10) + 3;
             player.hp -= counter;
             damageTexts.push({ text: "-" + counter, x: player.x+20, y: player.y, startY: player.y, color: "blue" });
@@ -136,10 +136,8 @@
               player.exp += 20;
               damageTexts.push({ text: "+20 EXP", x: enemy.x+20, y: enemy.y, startY: enemy.y, color: "green" });
 
-              // Loot drop chance
-              if (Math.random() < 0.5) { // 50% chance
-                lootDrops.push({ x: enemy.x, y: enemy.y, type: "Potion" });
-              }
+              // Loot drop
+              if (Math.random() < 0.5) lootDrops.push({ x: enemy.x, y: enemy.y, type: "Potion" });
 
               // Respawn enemy
               enemy.hp = 40 + Math.floor(Math.random() * 40);
@@ -200,4 +198,5 @@
   <button onclick="register()">Register</button>
   <button onclick="login()">Login</button>
 
-  <
+  <canvas id="gameCanvas" width="600" height="
+
