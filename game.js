@@ -1,26 +1,8 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } 
-  from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc } 
-  from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+import { auth, db, player, savePlayer } from "./auth.js";
 
-// Firebase config
-const firebaseConfig = {
-  apiKey: "AIzaSyDzNp6ZXv1KcQR5YK7RCWL5fiOWAAhS8NM",
-  authDomain: "flyffgalaxy.firebaseapp.com",
-  projectId: "flyffgalaxy",
-  storageBucket: "flyffgalaxy.firebasestorage.app",
-  messagingSenderId: "957266144921",
-  appId: "1:957266144921:web:615b297948b643f8401208",
-  measurementId: "G-3E1VNME1K2"
-};
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-// Player + Enemies + Loot
-let player = { x: 50, y: 150, hp: 100, mp: 50, exp: 0, level: 1, inventory: [] };
 let enemies = [
   { x: 300, y: 150, hp: 50 },
   { x: 400, y: 200, hp: 70 },
@@ -29,46 +11,16 @@ let enemies = [
 let damageTexts = [];
 let lootDrops = [];
 
-// Register + Login
-export async function register() {
-  const email = document.getElementById("email").value;
-  const pass = document.getElementById("password").value;
-  const user = await createUserWithEmailAndPassword(auth, email, pass);
-  await setDoc(doc(db, "players", user.user.uid), player);
-  alert("Account created!");
-}
-
-export async function login() {
-  const email = document.getElementById("email").value;
-  const pass = document.getElementById("password").value;
-  const user = await signInWithEmailAndPassword(auth, email, pass);
-  const snap = await getDoc(doc(db, "players", user.user.uid));
-  if (snap.exists()) {
-    player = snap.data();
-    drawScene();
-    alert("Welcome back! Level: " + player.level);
-  }
-}
-
-async function savePlayer(uid) {
-  await setDoc(doc(db, "players", uid), player);
-}
-
-// Canvas + Sprites
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
-
 const sprite = new Image();
-sprite.src = "https://i.imgur.com/4AiXzf8.png"; // character sprite
+sprite.src = "https://i.imgur.com/4AiXzf8.png";
 const enemySprite = new Image();
-enemySprite.src = "https://i.imgur.com/2yaf2wb.png"; // enemy sprite
+enemySprite.src = "https://i.imgur.com/2yaf2wb.png";
 const potionSprite = new Image();
-potionSprite.src = "https://i.imgur.com/1XQnFqT.png"; // potion icon
+potionSprite.src = "https://i.imgur.com/1XQnFqT.png";
 
-function drawScene() {
+export function drawScene() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Player
   if (player.hp > 0) {
     ctx.drawImage(sprite, player.x, player.y, 50, 50);
   } else {
@@ -77,17 +29,14 @@ function drawScene() {
     ctx.fillText("You Died! Respawning...", canvas.width/2 - 80, canvas.height/2);
   }
 
-  // Enemies
   enemies.forEach(enemy => {
     if (enemy.hp > 0) ctx.drawImage(enemySprite, enemy.x, enemy.y, 50, 50);
   });
 
-  // Loot
   lootDrops.forEach(loot => {
     ctx.drawImage(potionSprite, loot.x, loot.y, 30, 30);
   });
 
-  // Floating damage
   damageTexts.forEach((dmg, i) => {
     ctx.fillStyle = dmg.color;
     ctx.font = "16px Arial";
@@ -96,7 +45,6 @@ function drawScene() {
     if (dmg.y < dmg.startY - 30) damageTexts.splice(i, 1);
   });
 
-  // HUD
   ctx.fillStyle = "black";
   ctx.font = "14px Arial";
   ctx.fillText("HP: " + player.hp, 10, 20);
@@ -114,7 +62,6 @@ document.addEventListener("keydown", async (e) => {
   if (e.key === "ArrowLeft") player.x -= 10;
   if (e.key === "ArrowRight") player.x += 10;
 
-  // Attack
   if (e.key === " ") {
     enemies.forEach(enemy => {
       if (Math.abs(player.x - enemy.x) < 60 && Math.abs(player.y - enemy.y) < 60 && enemy.hp > 0) {
@@ -123,7 +70,6 @@ document.addEventListener("keydown", async (e) => {
         player.exp += 5;
         damageTexts.push({ text: "-" + dmg, x: enemy.x+20, y: enemy.y, startY: enemy.y, color: "red" });
 
-        // Counter-attack
         let counter = Math.floor(Math.random() * 10) + 3;
         player.hp -= counter;
         damageTexts.push({ text: "-" + counter, x: player.x+20, y: player.y, startY: player.y, color: "blue" });
@@ -132,10 +78,8 @@ document.addEventListener("keydown", async (e) => {
           player.exp += 20;
           damageTexts.push({ text: "+20 EXP", x: enemy.x+20, y: enemy.y, startY: enemy.y, color: "green" });
 
-          // Loot drop
           if (Math.random() < 0.5) lootDrops.push({ x: enemy.x, y: enemy.y, type: "Potion" });
 
-          // Respawn enemy
           enemy.hp = 40 + Math.floor(Math.random() * 40);
           enemy.x = 200 + Math.floor(Math.random() * 200);
           enemy.y = 100 + Math.floor(Math.random() * 200);
@@ -144,7 +88,6 @@ document.addEventListener("keydown", async (e) => {
     });
   }
 
-  // Pick up loot
   if (e.key === "Enter") {
     lootDrops.forEach((loot, i) => {
       if (Math.abs(player.x - loot.x) < 40 && Math.abs(player.y - loot.y) < 40) {
@@ -155,7 +98,6 @@ document.addEventListener("keydown", async (e) => {
     });
   }
 
-  // Level up
   if (player.exp >= 100) {
     player.level += 1;
     player.exp = 0;
@@ -163,25 +105,9 @@ document.addEventListener("keydown", async (e) => {
     damageTexts.push({ text: "Level Up!", x: player.x, y: player.y, startY: player.y, color: "gold" });
   }
 
-  // Death + Respawn
   if (player.hp <= 0) {
     setTimeout(() => {
       player.hp = 100;
       player.x = 50;
       player.y = 150;
-      damageTexts.push({ text: "Respawned!", x: player.x, y: player.y, startY: player.y, color: "purple" });
-    }, 2000);
-  }
-
-  drawScene();
-  await savePlayer(user.uid);
-});
-
-function gameLoop() {
-  drawScene();
-  requestAnimationFrame(gameLoop);
-}
-
-sprite.onload = () => gameLoop();
-enemySprite.onload = () => gameLoop();
-potionSprite.onload = () => gameLoop();
+      damageTexts.push({ text: "Respawned!", x:
