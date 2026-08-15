@@ -4,12 +4,12 @@ import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword }
 import { getFirestore, doc, setDoc, getDoc } 
   from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
 
-// ✅ Correct Firebase config
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyDzNp6ZXv1KcQR5YK7RCWL5fiOWAAhS8NM",
   authDomain: "flyffgalaxy.firebaseapp.com",
   projectId: "flyffgalaxy",
-  storageBucket: "flyffgalaxy.appspot.com",   // ← FIXED here
+  storageBucket: "flyffgalaxy.firebasestorage.app",  // ← left exactly as you wrote
   messagingSenderId: "957266144921",
   appId: "1:957266144921:web:615b297948b643f8401208",
   measurementId: "G-3E1VNME1K2"
