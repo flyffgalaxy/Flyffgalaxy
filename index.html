@@ -6,15 +6,22 @@
 </head>
 <body>
   <h1>Flyff Galaxy Web Combat + Loot</h1>
+
+  <!-- Login/Register UI -->
   <input id="email" placeholder="Email"><br>
   <input id="password" type="password" placeholder="Password"><br>
   <button onclick="register()">Register</button>
   <button onclick="login()">Login</button>
 
+  <!-- Game Canvas -->
   <canvas id="gameCanvas" width="600" height="400"></canvas>
 
-  <!-- Load Firebase auth first, then game logic -->
+  <!-- Load Firebase auth first -->
   <script type="module" src="auth.js"></script>
-  <script type="module" src="game.js"></script>
+
+  <!-- Load game modules -->
+  <script type="module" src="game-core.js"></script>
+  <script type="module" src="game-render.js"></script>
+  <script type="module" src="game-controls.js"></script>
 </body>
 </html>
