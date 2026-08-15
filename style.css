@@ -1,19 +1,15 @@
 body {
-  text-align: center;
   font-family: Arial, sans-serif;
+  text-align: center;
   background: #f0f0f0;
 }
 
-h1 {
+canvas {
+  border: 2px solid black;
   margin-top: 20px;
 }
 
 input, button {
   margin: 5px;
   padding: 8px;
-}
-
-canvas {
-  border: 1px solid black;
-  margin-top: 15px;
 }
