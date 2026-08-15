@@ -169,3 +169,19 @@ document.addEventListener("keydown", async (e) => {
       player.hp = 100;
       player.x = 50;
       player.y = 150;
+      damageTexts.push({ text: "Respawned!", x: player.x, y: player.y, startY: player.y, color: "purple" });
+    }, 2000);
+  }
+
+  drawScene();
+  await savePlayer(user.uid);
+});
+
+function gameLoop() {
+  drawScene();
+  requestAnimationFrame(gameLoop);
+}
+
+sprite.onload = () => gameLoop();
+enemySprite.onload = () => gameLoop();
+potionSprite.onload = () => gameLoop();
