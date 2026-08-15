@@ -22,43 +22,43 @@ export const db = getFirestore(app);
 export let player = { x: 50, y: 150, hp: 100, mp: 50, exp: 0, level: 1, inventory: [], job: "Vagrant" };
 
 // Email/Password Register
-export async function register() {
+async function register() {
   const email = document.getElementById("email").value;
   const pass = document.getElementById("password").value;
   try {
     const user = await createUserWithEmailAndPassword(auth, email, pass);
     await setDoc(doc(db, "players", user.user.uid), player);
-    alert("Account created for: " + user.user.email);
+    document.getElementById("status").innerText = "Account created for: " + user.user.email;
   } catch (err) {
-    alert("Register error: " + err.code + " - " + err.message);
+    document.getElementById("status").innerText = "Register error: " + err.code;
   }
 }
 
 // Email/Password Login
-export async function login() {
+async function login() {
   const email = document.getElementById("email").value;
   const pass = document.getElementById("password").value;
   try {
     const user = await signInWithEmailAndPassword(auth, email, pass);
-    alert("Login success: " + user.user.email);
+    document.getElementById("status").innerText = "Login success: " + user.user.email;
     const snap = await getDoc(doc(db, "players", user.user.uid));
     if (snap.exists()) {
       player = snap.data();
       window.drawScene();
     }
   } catch (err) {
-    alert("Login error: " + err.code + " - " + err.message);
+    document.getElementById("status").innerText = "Login error: " + err.code;
   }
 }
 
 // Google Login
 const provider = new GoogleAuthProvider();
 
-export async function loginWithGoogle() {
+async function loginWithGoogle() {
   try {
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
-    alert("Google login success: " + user.email);
+    document.getElementById("status").innerText = "Google login success: " + user.email;
 
     const snap = await getDoc(doc(db, "players", user.uid));
     if (!snap.exists()) {
@@ -69,15 +69,11 @@ export async function loginWithGoogle() {
 
     window.drawScene();
   } catch (err) {
-    alert("Google login error: " + err.code + " - " + err.message);
+    document.getElementById("status").innerText = "Google login error: " + err.code;
   }
 }
 
-export async function savePlayer(uid) {
-  await setDoc(doc(db, "players", uid), player);
-}
-
-// ✅ Expose functions globally so HTML buttons can call them
+// Expose functions globally
 window.register = register;
 window.login = login;
 window.loginWithGoogle = loginWithGoogle;
