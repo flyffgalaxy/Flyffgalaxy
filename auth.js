@@ -4,7 +4,7 @@ import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, Go
 import { getFirestore, doc, setDoc, getDoc } 
   from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
 
-// Firebase config (your version)
+// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyDzNp6ZXv1KcQR5YK7RCWL5fiOWAAhS8NM",
   authDomain: "flyffgalaxy.firebaseapp.com",
@@ -76,3 +76,8 @@ export async function loginWithGoogle() {
 export async function savePlayer(uid) {
   await setDoc(doc(db, "players", uid), player);
 }
+
+// ✅ Expose functions globally so HTML buttons can call them
+window.register = register;
+window.login = login;
+window.loginWithGoogle = loginWithGoogle;
