@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } 
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } 
   from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc } 
   from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
@@ -21,6 +21,7 @@ export const db = getFirestore(app);
 
 export let player = { x: 50, y: 150, hp: 100, mp: 50, exp: 0, level: 1, inventory: [], job: "Vagrant" };
 
+// Email/Password Register
 export async function register() {
   const email = document.getElementById("email").value;
   const pass = document.getElementById("password").value;
@@ -33,6 +34,7 @@ export async function register() {
   }
 }
 
+// Email/Password Login
 export async function login() {
   const email = document.getElementById("email").value;
   const pass = document.getElementById("password").value;
@@ -46,6 +48,28 @@ export async function login() {
     }
   } catch (err) {
     alert("Login error: " + err.code + " - " + err.message);
+  }
+}
+
+// Google Login
+const provider = new GoogleAuthProvider();
+
+export async function loginWithGoogle() {
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+    alert("Google login success: " + user.email);
+
+    const snap = await getDoc(doc(db, "players", user.uid));
+    if (!snap.exists()) {
+      await setDoc(doc(db, "players", user.uid), player);
+    } else {
+      Object.assign(player, snap.data());
+    }
+
+    window.drawScene();
+  } catch (err) {
+    alert("Google login error: " + err.code + " - " + err.message);
   }
 }
 
