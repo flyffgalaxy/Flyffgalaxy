@@ -1,0 +1,19 @@
+body {
+  text-align: center;
+  font-family: Arial, sans-serif;
+  background: #f0f0f0;
+}
+
+h1 {
+  margin-top: 20px;
+}
+
+input, button {
+  margin: 5px;
+  padding: 8px;
+}
+
+canvas {
+  border: 1px solid black;
+  margin-top: 15px;
+}
