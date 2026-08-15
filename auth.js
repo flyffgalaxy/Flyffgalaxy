@@ -4,12 +4,12 @@ import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword }
 import { getFirestore, doc, setDoc, getDoc } 
   from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
 
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// Firebase config (your version)
 const firebaseConfig = {
   apiKey: "AIzaSyDzNp6ZXv1KcQR5YK7RCWL5fiOWAAhS8NM",
   authDomain: "flyffgalaxy.firebaseapp.com",
   projectId: "flyffgalaxy",
-  storageBucket: "flyffgalaxy.firebasestorage.app",  // ← left exactly as you wrote
+  storageBucket: "flyffgalaxy.firebasestorage.app",
   messagingSenderId: "957266144921",
   appId: "1:957266144921:web:615b297948b643f8401208",
   measurementId: "G-3E1VNME1K2"
@@ -19,10 +19,8 @@ export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
-// Default player template
-export let player = { x: 50, y: 150, hp: 100, mp: 50, exp: 0, level: 1, inventory: [] };
+export let player = { x: 50, y: 150, hp: 100, mp: 50, exp: 0, level: 1, inventory: [], job: "Vagrant" };
 
-// Register
 export async function register() {
   const email = document.getElementById("email").value;
   const pass = document.getElementById("password").value;
@@ -35,7 +33,6 @@ export async function register() {
   }
 }
 
-// Login
 export async function login() {
   const email = document.getElementById("email").value;
   const pass = document.getElementById("password").value;
@@ -45,7 +42,7 @@ export async function login() {
     const snap = await getDoc(doc(db, "players", user.user.uid));
     if (snap.exists()) {
       player = snap.data();
-      window.drawScene(); // call game rendering after login
+      window.drawScene();
     }
   } catch (err) {
     alert("Login error: " + err.code + " - " + err.message);
